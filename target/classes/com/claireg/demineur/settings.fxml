@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.claireg.demineur.SettingsController" styleClass="main-box">
+    <top>
+		<Button fx:id="goBackButton" text="Retour" onAction="#goToMenu" styleClass="btn-back"/>
+	</top>
+    
+	<center>
+		<VBox spacing="30" styleClass="container-params">
+			<VBox spacing="10">
+				<Label text="Nombre de lignes" styleClass="text-params"/>
+				<TextField fx:id="newRowsNumber" text="10" styleClass="input-params"/>
+			</VBox>
+			
+			<VBox spacing="10">
+				<Label text="Nombre de colonnes" styleClass="text-params"/>
+				<TextField fx:id="newColsNumber" text="10" styleClass="input-params"/>
+			</VBox>
+			
+			<VBox spacing="10">
+				<Label text="Nombre de mines" styleClass="text-params"/>
+				<TextField fx:id="newMinesNumber" text="15" styleClass="input-params"/>
+			</VBox>
+
+			<HBox spacing="15" alignment="CENTER">
+				<Button fx:id="defaultParamsButton" text="Réinitiliser" styleClass="btn-params" onAction="#putDefaultParams"/>
+				<Button fx:id="saveParametersButton" text="Enregistrer" styleClass="btn-params" onAction="#saveParameters"/>
+			</HBox>
+		</VBox>
+	</center>
+</BorderPane>

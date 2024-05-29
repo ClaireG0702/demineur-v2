@@ -1,0 +1,65 @@
+/* General */
+.main-box {
+	-fx-padding: 24px;
+	-fx-background-color: white;
+}
+
+.btn-back {
+	-fx-font-size: 16px;
+	-fx-padding: 4px 6px;
+}
+
+/* Menu */
+.primary-title {
+	-fx-padding: 46px 0 0 0;
+	-fx-font-size: 32px;
+}
+
+.container-menu {
+}
+
+.btn-menu,
+.half-btn-menu {
+	-fx-font-size: 14px;
+	-fx-padding: 12px 4px;
+}
+.btn-menu {
+	-fx-min-width: 300px;
+}
+.half-btn-menu {
+	-fx-min-width: 150px;
+}
+
+/* Parametres */
+.btn-params {
+	-fx-font-size: 14px;
+	-fx-min-width: 150px;
+	-fx-padding: 6px 4px;
+}
+
+.container-params {
+	-fx-padding: 60px 60px 0 60px;
+}
+
+.text-params {
+	-fx-font-size: 16px;
+}
+
+.input-params {
+	-fx-font-size: 14px;
+	-fx-min-width: 300px;
+}
+
+/* Jeu */
+
+
+
+/* Fin de jeu */
+.text-end-game {
+	-fx-font-size: 32px;
+}
+
+.btn-end-game {
+	-fx-font-size: 16px;
+	-fx-padding: 6px 4px;
+}
