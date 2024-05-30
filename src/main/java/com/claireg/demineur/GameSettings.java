@@ -7,6 +7,8 @@ public class GameSettings {
     private static int minesNumber = 15;
     private static String endGameMessage = "Victory";
 
+    private static boolean resumeGame = false;
+
     public static int getRowsNumber() {
         return rowsNumber;
     }
@@ -37,5 +39,13 @@ public class GameSettings {
 
     public static void setEndGameMessage(String endGameMessage) {
         GameSettings.endGameMessage = endGameMessage;
+    }
+
+    public static boolean getResumeGame() {
+        return resumeGame;
+    }
+
+    public static void setResumeGame(boolean resumeGame) {
+        GameSettings.resumeGame = resumeGame;
     }
 }

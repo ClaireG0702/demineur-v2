@@ -1,5 +1,10 @@
 package com.claireg.demineur;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
@@ -32,19 +37,26 @@ public class GameController {
     @FXML
     private GridPane gameGrid;
 
+    private static final String FILE_NAME = "game-infos.txt";
+
     @FXML
     private void initialize() {
-        rowsNumber = GameSettings.getRowsNumber();
-        colsNumber = GameSettings.getColsNumber();
-        minesNumber = GameSettings.getMinesNumber();
-        visualMinesRemained = minesNumber;
+        if (GameSettings.getResumeGame()) {
+            gameGrid.getChildren().clear();
+            loadGameInfos();
+        } else {
+            rowsNumber = GameSettings.getRowsNumber();
+            colsNumber = GameSettings.getColsNumber();
+            minesNumber = GameSettings.getMinesNumber();
+            visualMinesRemained = minesNumber;
 
-        remainedMines.setText(String.valueOf(minesNumber));
-        mines = new boolean[rowsNumber][colsNumber];
-        flags = new boolean[rowsNumber][colsNumber];
-        casesRevealed = new boolean[rowsNumber][colsNumber];
+            remainedMines.setText(String.valueOf(minesNumber));
+            mines = new boolean[rowsNumber][colsNumber];
+            flags = new boolean[rowsNumber][colsNumber];
+            casesRevealed = new boolean[rowsNumber][colsNumber];
 
-        generateMinesPositions();
+            generateMinesPositions();
+        }
 
         for (int i = 0; i < rowsNumber; i++) {
             for (int j = 0; j < colsNumber; j++) {
@@ -56,6 +68,10 @@ public class GameController {
                 caseButton.setOnMouseClicked(event -> handleCaseClick(event, x, y));
                 gameGrid.add(caseButton, j, i);
             }
+        }
+
+        if (GameSettings.getResumeGame()) {
+            refreshView();
         }
     }
 
@@ -113,6 +129,7 @@ public class GameController {
 
     @FXML
     private void goToMenu() throws IOException {
+        saveGameInfos();
         App.setRoot("menu");
     }
 
@@ -128,6 +145,10 @@ public class GameController {
                     System.out.println("Game over");
                     try {
                         goToEndGame("Game over");
+                        File file = new File(FILE_NAME);
+                        if (file.exists()) {
+                            file.delete();
+                        }
                     } catch (IOException ex) {
                         System.err.println("Can't go to game over view");
                     }
@@ -137,6 +158,10 @@ public class GameController {
                         System.out.println("Victoire");
                         try {
                             goToEndGame("Victoire");
+                            File file = new File(FILE_NAME);
+                            if (file.exists()) {
+                                file.delete();
+                            }
                         } catch (IOException e) {
                             System.err.println("Can't go to victory view");
                         }
@@ -172,6 +197,10 @@ public class GameController {
                     System.out.println("Victoire");
                     try {
                         goToEndGame("Victoire");
+                        File file = new File(FILE_NAME);
+                        if (file.exists()) {
+                            file.delete();
+                        }
                     } catch (IOException e) {
                         System.err.println("Can't go to victory view");
                     }
@@ -193,5 +222,93 @@ public class GameController {
         }
 
         return true;
+    }
+
+    private void saveGameInfos() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, false))) {
+            writer.write(String.valueOf(rowsNumber));
+            writer.newLine();
+            writer.write(String.valueOf(colsNumber));
+            writer.newLine();
+            writer.write(String.valueOf(minesNumber));
+            writer.newLine();
+            writer.write(String.valueOf(visualMinesRemained));
+            writer.newLine();
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    writer.write(String.valueOf(mines[i][j]));
+                    writer.newLine();
+                }
+            }
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    writer.write(String.valueOf(flags[i][j]));
+                    writer.newLine();
+                }
+            }
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    writer.write(String.valueOf(casesRevealed[i][j]));
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadGameInfos() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            rowsNumber = Integer.parseInt(reader.readLine());
+            colsNumber = Integer.parseInt(reader.readLine());
+            minesNumber = Integer.parseInt(reader.readLine());
+            visualMinesRemained = Integer.parseInt(reader.readLine());
+
+            mines = new boolean[rowsNumber][colsNumber];
+            flags = new boolean[rowsNumber][colsNumber];
+            casesRevealed = new boolean[rowsNumber][colsNumber];
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    mines[i][j] = Boolean.parseBoolean(reader.readLine());
+                }
+            }
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    flags[i][j] = Boolean.parseBoolean(reader.readLine());
+                }
+            }
+
+            for (int i = 0; i < rowsNumber; i++) {
+                for (int j = 0; j < colsNumber; j++) {
+                    casesRevealed[i][j] = Boolean.parseBoolean(reader.readLine());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Affiche l'erreur dans la console
+        }
+    }
+
+    private void refreshView() {
+        for (int i = 0; i < rowsNumber; i++) {
+            for (int j = 0; j < colsNumber; j++) {
+                if (casesRevealed[i][j]) {
+                    casesRevealed[i][j] = false;
+                    revealeCasesAround(i, j);
+                } else if (flags[i][j]) {
+                    Button button = (Button) gameGrid.getChildren().get((i * colsNumber + j) + 1);
+                    Image img = new Image(getClass().getResourceAsStream("/com/claireg/demineur/images/flag.png"));
+                    ImageView imgView = new ImageView(img);
+                    imgView.setFitHeight(30);
+                    imgView.setFitWidth(30);
+                    imgView.setPreserveRatio(true);
+                    button.setGraphic(imgView);
+                }
+            }
+        }
     }
 }

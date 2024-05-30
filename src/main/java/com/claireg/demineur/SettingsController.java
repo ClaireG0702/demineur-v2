@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 
 public class SettingsController {
 
+    private final int MAX_SIZE = 15;
+
     @FXML
     private TextField newRowsNumber;
 
@@ -21,6 +23,40 @@ public class SettingsController {
         newRowsNumber.setText(String.valueOf(GameSettings.getRowsNumber()));
         newColsNumber.setText(String.valueOf(GameSettings.getColsNumber()));
         newMinesNumber.setText(String.valueOf(GameSettings.getMinesNumber()));
+
+        newRowsNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int value = Integer.parseInt(newValue);
+                if (value > MAX_SIZE) {
+                    newRowsNumber.setText(oldValue);
+                }
+            } catch (NumberFormatException e) {
+                newRowsNumber.setText(oldValue);
+            }
+        });
+
+        newColsNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int value = Integer.parseInt(newValue);
+                if (value > MAX_SIZE) {
+                    newColsNumber.setText(oldValue);
+                }
+            } catch (NumberFormatException e) {
+                newColsNumber.setText(oldValue);
+            }
+        });
+
+        newMinesNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int value = Integer.parseInt(newValue);
+                int max_mines = (Integer.parseInt(newRowsNumber.getText()) * Integer.parseInt(newColsNumber.getText())) - 5;
+                if (value > max_mines) {
+                    newMinesNumber.setText(oldValue);
+                }
+            } catch (NumberFormatException e) {
+                newMinesNumber.setText(oldValue);
+            }
+        });
     }
 
     @FXML
